@@ -6,6 +6,8 @@
 #include "ThirdPersonMPCharacter.h"
 #include "ThirdPersonPlayerController.h"
 #include "GameFramework/PlayerState.h"
+#include "Network/ThirdPersonPingHost.h"
+#include "Network/ThirdPersonPingHostObject.h"
 #include "UObject/ConstructorHelpers.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogTPGameMode, Log, All);
@@ -30,6 +32,20 @@ AThirdPersonMPGameMode::AThirdPersonMPGameMode()
 		PlayerControllerClass = AThirdPersonPlayerController::StaticClass();
 	}
 	
+}
+
+void AThirdPersonMPGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	auto const bSuccess = InitPingBeacon();
+	if(bSuccess)
+	{
+		
+	}
+	else
+	{
+		
+	}
 }
 
 void AThirdPersonMPGameMode::RestartPlayer(AController* NewPlayer)
@@ -77,4 +93,24 @@ void AThirdPersonMPGameMode::Logout(AController* Exiting)
 	{
 		LTPGameState->SetConnectedPlayers(LTPGameState->ConnectedPlayers - 1);
 	}
+}
+
+bool AThirdPersonMPGameMode::InitPingBeacon()
+{
+	auto const NetMode = GetNetMode();
+	if(NetMode == NM_DedicatedServer || NetMode == NM_ListenServer)
+	{
+		auto PingHost = GetWorld()->SpawnActor<AThirdPersonPingHost>(AThirdPersonPingHost::StaticClass());
+		if(PingHost && PingHost->InitializeHost())
+		{
+			auto const HostObject = GetWorld()->SpawnActor<AThirdPersonPingHostObject>(AThirdPersonPingHostObject::StaticClass());
+			if(HostObject)
+			{
+				PingHost->RegisterHostObject(HostObject);
+				return true;
+			}
+		}
+	}
+	
+	return false;
 }

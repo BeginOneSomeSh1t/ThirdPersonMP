@@ -13,5 +13,15 @@ UCLASS()
 class THIRDPERSONMP_API AThirdPersonPingHost : public AOnlineBeaconHost
 {
 	GENERATED_BODY()
-	
+public:
+	AThirdPersonPingHost(const FObjectInitializer& ObjectInitializer);
+ 
+	UFUNCTION(BlueprintCallable, Category=Ping)
+	bool InitializeHost();
+ 
+	UFUNCTION(BlueprintCallable, Category=Ping)
+	void RegisterHostObject(AOnlineBeaconHostObject* HostObject);
+ 
+protected:
+	bool bInitSuccess;
 };

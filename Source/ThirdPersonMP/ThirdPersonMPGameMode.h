@@ -17,6 +17,8 @@ public:
 	AThirdPersonMPGameMode();
 
 #pragma region Gameplay
+protected:
+	virtual void BeginPlay() override;
 
 #pragma region Respawn
 	
@@ -41,6 +43,15 @@ protected:
 
 	// Override to decrement the connected players
 	virtual void Logout(AController* Exiting) override;
+
+
+#pragma region OnlineBeacon
+public:
+	bool InitPingBeacon();
+
+	
+#pragma endregion
+	
 #pragma endregion
 };
 
